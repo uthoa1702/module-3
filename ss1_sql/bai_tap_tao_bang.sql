@@ -1,16 +1,29 @@
-CREATE database student_management;
-use student_management;
-create table class (id int primary key, `name` varchar(50));
-CREATE table teacher (id int primary key,
-`name` varchar(50),
-age int, 
-country varchar(50)
+CREATE DATABASE student_management;
+USE student_management;
+CREATE TABLE class (
+    id INT PRIMARY KEY,
+    `name` VARCHAR(50)
 );
-select * from class;
-select `name` from class;
-drop table class;
-insert into class values (1,"c01"), 
+CREATE TABLE teacher (
+    id INT PRIMARY KEY,
+    `name` VARCHAR(50),
+    age INT,
+    country VARCHAR(50)
+);
+SELECT 
+    *
+FROM
+    class;
+SELECT 
+    `name`
+FROM
+    class;
+DROP TABLE class;
+INSERT INTO class VALUES (1,"c01"), 
 (2,"c02"), 
 (3,"c03");
-insert into teacher value (1,"Hoa", 22, "Vie");
-select * from teacher;
+INSERT INTO teacher VALUE (1,"Hoa", 22, "Vie");
+SELECT 
+    *
+FROM
+    teacher;
