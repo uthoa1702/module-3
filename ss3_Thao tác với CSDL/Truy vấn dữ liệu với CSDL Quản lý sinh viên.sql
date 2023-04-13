@@ -102,6 +102,7 @@ SET
     ClassID = 2
 WHERE
     StudentName LIKE 'Hung';
+SET SQL_SAFE_UPDATES = 1 ;
 
 
 
@@ -109,6 +110,9 @@ WHERE
 
 -- -------------------Hiển thị các thông tin: StudentName, SubName, Mark. Dữ liệu sắp xếp theo điểm thi (mark) giảm dần. nếu trùng sắp theo tên tăng dần.
 
+SELECT StudentName, SubName, Mark 
+FROM student, `subject`, Mark 
+ORDER BY Mark DESC, StudentName ASC;
 
 
 
