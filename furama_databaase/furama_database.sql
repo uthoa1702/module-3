@@ -273,7 +273,13 @@ INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
   
   -- ---------------- task 9 ------------------
 
-
+SELECT dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.so_nguoi_toi_da, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
+FROM dich_vu dv
+INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
+ WHERE dv.ma_dich_vu IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2020) AND dv.ma_dich_vu NOT IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2021)
+ GROUP BY ma_dich_vu
+;
 
 
 
