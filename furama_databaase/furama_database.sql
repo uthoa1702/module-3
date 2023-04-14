@@ -176,7 +176,7 @@ INSERT INTO dich_vu VALUES
 (6,3,1,2),
 (7,2,12,2);
  
- 
+
 
 -- ------------- task 2 --------------
 
@@ -226,29 +226,59 @@ ifnull((dv.chi_phi_thue + ifnull(hdct.so_luong * dvdk.gia, 0) ),0) AS tong_tien
 FROM khach_hang AS kh
 LEFT JOIN hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
 LEFT JOIN dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
-LEFT JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
 LEFT JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
 LEFT JOIN dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
 ORDER BY tong_tien asc;
 
 
 
+-- ---------------- task 6 ------------------
+
+-- Hiển thị ma_dich_vu, ten_dich_vu, dien_tich, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
+-- của tất cả các loại dịch vụ chưa từng được khách hàng thực hiện đặt từ quý 1 của năm 2021
+-- (Quý 1 là tháng 1, 2, 3).
+
+SELECT dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
+FROM dich_vu dv
+INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
+ WHERE dv.ma_dich_vu NOT IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2021 AND quarter(ngay_lam_hop_dong) = 1 )
+ GROUP BY ma_dich_vu
+;
 
 
 
 
+-- ---------------- task 7 ------------------
+
+-- Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu
+-- của tất cả các loại dịch vụ đã từng được khách hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021.
+
+SELECT dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.so_nguoi_toi_da, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
+FROM dich_vu dv
+INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
+ WHERE dv.ma_dich_vu IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2020) AND dv.ma_dich_vu NOT IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2021)
+ GROUP BY ma_dich_vu
+;
 
 
 
-
-
-
-
-
-
+-- ---------------- task 8 ------------------
 
 
 
   
   
-  
+  -- ---------------- task 9 ------------------
+
+
+
+
+
+
+
+
+-- ---------------- task 10 ------------------
+
