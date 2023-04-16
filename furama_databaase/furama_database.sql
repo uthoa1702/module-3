@@ -266,25 +266,81 @@ INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
 
 
 -- ---------------- task 8 ------------------
+-- Hiển thị thông tin ho_ten khách hàng có trong hệ thống, với yêu cầu ho_ten không trùng nhau.
+-- Học viên sử dụng theo 3 cách khác nhau để thực hiện yêu cầu trên.
+
+-- cách 1:
+
+
+USE furama;
+SELECT DISTINCT kh.ho_ten
+FROM khach_hang kh;
+
+
+
+
+-- cách 2:
+
+
+
+SELECT kh.ho_ten
+FROM khach_hang kh
+GROUP BY ho_ten;
+
+-- cách 3:
+
+
+SELECT kh.ho_ten FROM khach_hang kh WHERE kh.ho_ten IN (SELECT DISTINCT kh.ho_ten FROM khach_hang kh);
 
 
 
   
   
   -- ---------------- task 9 ------------------
+-- Thực hiện thống kê doanh thu theo tháng,
+-- nghĩa là tương ứng với mỗi tháng trong năm 2021 thì sẽ có bao nhiêu khách hàng thực hiện đặt phòng.
 
-SELECT dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.so_nguoi_toi_da, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
-FROM dich_vu dv
-INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
-INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
- WHERE dv.ma_dich_vu IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2020) AND dv.ma_dich_vu NOT IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2021)
- GROUP BY ma_dich_vu
-;
-
-
+SELECT month(hd.ngay_lam_hop_dong) AS month_in_2021 , count(hd.ma_khach_hang) AS so_luong_khach_hang
+FROM hop_dong AS hd
+WHERE year(hd.ngay_lam_hop_dong) = 2021 and month(hd.ngay_lam_hop_dong) 
+GROUP BY month(hd.ngay_lam_hop_dong)
+ORDER BY month(hd.ngay_lam_hop_dong);
 
 
 
 
 -- ---------------- task 10 ------------------
+-- Hiển thị thông tin tương ứng với từng hợp đồng thì đã sử dụng bao nhiêu dịch vụ đi kèm.
+-- Kết quả hiển thị bao gồm ma_hop_dong, ngay_lam_hop_dong, ngay_ket_thuc, tien_dat_coc, so_luong_dich_vu_di_kem
+--  (được tính dựa trên việc sum so_luong ở dich_vu_di_kem).
+
+SELECT hd.ma_hop_dong, hd.ngay_lam_hop_dong, hd.ngay_ket_thuc, ifnull((hd.tien_dat_coc),0) AS tien_dat_coc,ifnull(sum(hdct.so_luong),0) AS so_luong_dich_vu_di_kem 
+FROM hop_dong AS hd
+LEFT JOIN hop_dong_chi_tiet AS hdct ON hd.ma_hop_dong = hdct.ma_hop_dong
+GROUP BY  hd.ma_hop_dong;
+
+
+
+
+
+-- ---------------- task 11 ------------------
+
+-- Hiển thị thông tin các dịch vụ đi kèm đã được sử dụng bởi những khách hàng có
+--  ten_loai_khach là “Diamond” và có dia_chi ở “Vinh” hoặc “Quảng Ngãi”.
+
+SELECT hdct.ma_dich_vu_di_kem, dvdk.ten_dich_vu_di_kem
+FROM khach_hang AS kh
+INNER JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+INNER JOIN hop_dong AS hd ON hd.ma_khach_hang = kh.ma_khach_hang
+INNER JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+INNER JOIN dich_vu_di_kem AS dvdk ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+WHERE lk.ten_loai_khach = 'Diamond' AND (kh.dia_chi LIKE "% Quảng Ngãi" OR kh.dia_chi LIKE "% Vinh");
+
+
+
+
+
+
+
+
 
