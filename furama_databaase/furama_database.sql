@@ -334,7 +334,60 @@ INNER JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
 INNER JOIN hop_dong AS hd ON hd.ma_khach_hang = kh.ma_khach_hang
 INNER JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
 INNER JOIN dich_vu_di_kem AS dvdk ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
-WHERE lk.ten_loai_khach = 'Diamond' AND (kh.dia_chi LIKE "% Quảng Ngãi" OR kh.dia_chi LIKE "% Vinh");
+WHERE lk.ten_loai_khach = 'Diamond' AND (kh.dia_chi LIKE "%Quảng Ngãi%" OR kh.dia_chi LIKE "%Vinh%");
+
+
+
+-- ---------------- task 12 ------------------
+
+-- Hiển thị thông tin
+-- ma_hop_dong, ho_ten (nhân viên), ho_ten (khách hàng), so_dien_thoai (khách hàng), ten_dich_vu, so_luong_dich_vu_di_kem
+-- (được tính dựa trên việc sum so_luong ở dich_vu_di_kem),
+-- tien_dat_coc của tất cả các dịch vụ đã từng được khách hàng đặt vào 3 tháng cuối năm 2020
+-- nhưng chưa từng được khách hàng đặt vào 6 tháng đầu năm 2021.
+
+SELECT 
+    hd.ma_hop_dong,
+    nv.ho_va_ten,
+    kh.ho_ten,
+    kh.so_dien_thoai,
+    dv.ten_dich_vu,
+    IFNULL(SUM(hdct.so_luong), 0) AS so_luong_dich_vu_di_kem,
+    hd.tien_dat_coc
+FROM
+    hop_dong AS hd
+        LEFT JOIN
+    khach_hang AS kh ON kh.ma_khach_hang = hd.ma_khach_hang
+        LEFT JOIN
+    nhan_vien AS nv ON nv.ma_nhan_vien = hd.ma_nhan_vien
+        LEFT JOIN
+    dich_vu AS dv ON dv.ma_dich_vu = hd.ma_dich_vu
+        LEFT JOIN
+    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+        LEFT JOIN
+    dich_vu_di_kem AS dvdk ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+WHERE year(hd.ngay_lam_hop_dong) = 2020 AND
+    QUARTER(hd.ngay_lam_hop_dong) = 4
+GROUP BY hd.ma_hop_dong;
+
+
+
+-- ---------------- task 12 ------------------
+
+-- Hiển thị thông tin các Dịch vụ đi kèm được sử dụng nhiều nhất bởi các Khách hàng đã đặt phòng.
+--  (Lưu ý là có thể có nhiều dịch vụ có số lần sử dụng nhiều như nhau).
+
+SELECT dvdk.ten_dich_vu_di_kem, sum(hdct.so_luong) AS so_luong_dich_vu_kem
+FROM dich_vu_di_kem AS dvdk
+INNER JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+GROUP BY hdct.ma_dich_vu_di_kem
+ORDER BY so_luong_dich_vu_kem DESC
+LIMIT 2;
+
+
+
+
+
 
 
 
