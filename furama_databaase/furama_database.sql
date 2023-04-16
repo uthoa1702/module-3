@@ -372,14 +372,18 @@ GROUP BY hd.ma_hop_dong;
 
 
 
--- ---------------- task 12 ------------------
+-- ---------------- task 13 ------------------
 
 -- Hiển thị thông tin các Dịch vụ đi kèm được sử dụng nhiều nhất bởi các Khách hàng đã đặt phòng.
 --  (Lưu ý là có thể có nhiều dịch vụ có số lần sử dụng nhiều như nhau).
 
-SELECT dvdk.ten_dich_vu_di_kem, sum(hdct.so_luong) AS so_luong_dich_vu_kem
-FROM dich_vu_di_kem AS dvdk
-INNER JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+SELECT 
+    dvdk.ten_dich_vu_di_kem,
+    SUM(hdct.so_luong) AS so_luong_dich_vu_kem
+FROM
+    dich_vu_di_kem AS dvdk
+        INNER JOIN
+    hop_dong_chi_tiet AS hdct ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
 GROUP BY hdct.ma_dich_vu_di_kem
 ORDER BY so_luong_dich_vu_kem DESC
 LIMIT 2;
@@ -388,12 +392,72 @@ LIMIT 2;
 
 
 
+-- ---------------- task 14 ------------------
+
+
+-- Hiển thị thông tin tất cả các Dịch vụ đi kèm chỉ mới được sử dụng một lần duy nhất.
+-- Thông tin hiển thị bao gồm ma_hop_dong, ten_loai_dich_vu, ten_dich_vu_di_kem, so_lan_su_dung 
+-- (được tính dựa trên việc count các ma_dich_vu_di_kem).
+
+SELECT dvdk.ten_dich_vu_di_kem 
+FROM hop_dong_chi_tiet AS hdct
+INNER JOIN dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+GROUP BY hdct.ma_dich_vu_di_kem
+HAVING count(hdct.ma_dich_vu_di_kem) = 1;
+
+
+SELECT 
+    hd.ma_hop_dong,
+    ldv.ten_loai_dich_vu,
+    dvdk.ten_dich_vu_di_kem,
+    COUNT(hdct.ma_dich_vu_di_kem) AS so_lan_su_dung
+FROM
+    hop_dong AS hd
+        INNER JOIN
+    dich_vu AS dv ON dv.ma_dich_vu = hd.ma_dich_vu
+        INNER JOIN
+    loai_dich_vu AS ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+        INNER JOIN
+    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+        INNER JOIN
+    dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+WHERE
+    dvdk.ten_dich_vu_di_kem IN (SELECT 
+            dvdk.ten_dich_vu_di_kem
+        FROM
+            hop_dong_chi_tiet AS hdct
+                INNER JOIN
+            dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+        GROUP BY hdct.ma_dich_vu_di_kem
+        HAVING COUNT(hdct.ma_dich_vu_di_kem) = 1)
+GROUP BY hdct.ma_dich_vu_di_kem, hd.ma_hop_dong ;
 
 
 
+-- ---------------- task 15 ------------------
+-- 15.	Hiển thi thông tin của tất cả nhân viên bao gồm
+-- ma_nhan_vien, ho_ten, ten_trinh_do, ten_bo_phan, so_dien_thoai,
+-- dia_chi mới chỉ lập được tối đa 3 hợp đồng từ năm 2020 đến 2021.
 
-
-
-
-
-
+  SELECT 
+    nv.ma_nhan_vien,
+    nv.ho_va_ten,
+    td.ten_trinh_do,
+    bp.ten_bo_phan,
+    nv.so_dien_thoai,
+    nv.dia_chi
+FROM
+    hop_dong AS hd
+        INNER JOIN
+    nhan_vien AS nv ON nv.ma_nhan_vien = hd.ma_nhan_vien
+        INNER JOIN
+    trinh_do AS td ON nv.ma_trinh_do = td.ma_trinh_do
+        INNER JOIN
+    bo_phan AS bp ON nv.ma_bo_phan = bp.ma_bo_phan
+GROUP BY hd.ma_nhan_vien
+HAVING COUNT(hd.ma_nhan_vien) <= 3;
+ 
+ 
+ 
+ 
+ 
