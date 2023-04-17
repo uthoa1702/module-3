@@ -168,14 +168,22 @@ INSERT INTO dich_vu VALUES
  ma_dich_vu_di_kem INT,FOREIGN KEY (ma_dich_vu_di_kem) REFERENCES dich_vu_di_kem(ma_dich_vu_di_kem) ON DELETE SET NULL,
  UNIQUE(ma_hop_dong, ma_dich_vu_di_kem)
  );
- INSERT INTO hop_dong_chi_tiet VALUES (1,5,2,4),
-(2,8,3,5),
-(3,7,2,6),
+ -- INSERT INTO hop_dong_chi_tiet VALUES (1,5,2,4),
+-- (2,8,3,5),
+-- (3,7,2,6),
+-- (4,1,3,1),
+-- (5,12,3,2),
+-- (6,3,1,2),
+-- (7,2,12,2);
+ INSERT INTO hop_dong_chi_tiet VALUES
+(1,5,2,4),
+(2,8,2,5),
+(3,15,2,6),
 (4,1,3,1),
-(5,12,3,2),
-(6,3,1,2),
-(7,2,12,2);
- 
+(5,11,3,2),
+(6,1,1,3),
+(7,2,1,2),
+(8,2,12,2);
 
 
 -- ------------- task 2 --------------
@@ -201,13 +209,18 @@ INSERT INTO dich_vu VALUES
 
 USE furama;
 
-SELECT kh.ho_ten, count(*) AS so_lan_dat
-FROM khach_hang kh
-INNER JOIN  loai_khach lk ON lk.ma_loai_khach = kh.ma_loai_khach
-INNER JOIN hop_dong hd ON kh.ma_khach_hang = hd.ma_khach_hang
-WHERE lk.ten_loai_khach LIKE 'Diamond'
+SELECT 
+    kh.ho_ten, COUNT(*) AS so_lan_dat
+FROM
+    khach_hang kh
+        INNER JOIN
+    loai_khach lk ON lk.ma_loai_khach = kh.ma_loai_khach
+        INNER JOIN
+    hop_dong hd ON kh.ma_khach_hang = hd.ma_khach_hang
+WHERE
+    lk.ten_loai_khach LIKE 'Diamond'
 GROUP BY kh.ma_khach_hang
-ORDER BY so_lan_dat asc;
+ORDER BY so_lan_dat ASC;
 
 
 
@@ -220,16 +233,29 @@ ORDER BY so_lan_dat asc;
 --  Chi Phí Thuê + Số Lượng * Giá, với Số Lượng và Giá là từ bảng dich_vu_di_kem, hop_dong_chi_tiet)
 --  cho tất cả các khách hàng đã từng đặt phòng. (những khách hàng nào chưa từng đặt phòng cũng phải hiển thị ra).
 
-SELECT kh.ma_khach_hang, kh.ho_ten, lk.ten_loai_khach, hd.ma_hop_dong, 
-dv.ten_dich_vu, hd.ngay_lam_hop_dong, hd.ngay_ket_thuc,
-ifnull((dv.chi_phi_thue + ifnull(hdct.so_luong * dvdk.gia, 0) ),0) AS tong_tien
-FROM khach_hang AS kh
-LEFT JOIN hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
-LEFT JOIN dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
-JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
-LEFT JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
-LEFT JOIN dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
-ORDER BY tong_tien asc;
+SELECT 
+    kh.ma_khach_hang,
+    kh.ho_ten,
+    lk.ten_loai_khach,
+    hd.ma_hop_dong,
+    dv.ten_dich_vu,
+    hd.ngay_lam_hop_dong,
+    hd.ngay_ket_thuc,
+    IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),
+            0) AS tong_tien
+FROM
+    khach_hang AS kh
+        LEFT JOIN
+    hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
+        LEFT JOIN
+    dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
+        JOIN
+    loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+        LEFT JOIN
+    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+        LEFT JOIN
+    dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+ORDER BY tong_tien ASC;
 
 
 
@@ -239,12 +265,27 @@ ORDER BY tong_tien asc;
 -- của tất cả các loại dịch vụ chưa từng được khách hàng thực hiện đặt từ quý 1 của năm 2021
 -- (Quý 1 là tháng 1, 2, 3).
 
-SELECT dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
-FROM dich_vu dv
-INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
-INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
- WHERE dv.ma_dich_vu NOT IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2021 AND quarter(ngay_lam_hop_dong) = 1 )
- GROUP BY ma_dich_vu
+SELECT 
+    dv.ma_dich_vu,
+    dv.ten_dich_vu,
+    dv.dien_tich,
+    dv.chi_phi_thue,
+    ldv.ten_loai_dich_vu
+FROM
+    dich_vu dv
+        INNER JOIN
+    loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+        INNER JOIN
+    hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
+WHERE
+    dv.ma_dich_vu NOT IN (SELECT 
+            ma_dich_vu
+        FROM
+            hop_dong
+        WHERE
+            YEAR(ngay_lam_hop_dong) = 2021
+                AND QUARTER(ngay_lam_hop_dong) = 1)
+GROUP BY ma_dich_vu
 ;
 
 
@@ -255,12 +296,33 @@ INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
 -- Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu
 -- của tất cả các loại dịch vụ đã từng được khách hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021.
 
-SELECT dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.so_nguoi_toi_da, dv.chi_phi_thue, ldv.ten_loai_dich_vu 
-FROM dich_vu dv
-INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
-INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
- WHERE dv.ma_dich_vu IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2020) AND dv.ma_dich_vu NOT IN (SELECT ma_dich_vu  FROM hop_dong WHERE year(ngay_lam_hop_dong) = 2021)
- GROUP BY ma_dich_vu
+SELECT 
+    dv.ma_dich_vu,
+    dv.ten_dich_vu,
+    dv.dien_tich,
+    dv.so_nguoi_toi_da,
+    dv.chi_phi_thue,
+    ldv.ten_loai_dich_vu
+FROM
+    dich_vu dv
+        INNER JOIN
+    loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+        INNER JOIN
+    hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
+WHERE
+    dv.ma_dich_vu IN (SELECT 
+            ma_dich_vu
+        FROM
+            hop_dong
+        WHERE
+            YEAR(ngay_lam_hop_dong) = 2020)
+        AND dv.ma_dich_vu NOT IN (SELECT 
+            ma_dich_vu
+        FROM
+            hop_dong
+        WHERE
+            YEAR(ngay_lam_hop_dong) = 2021)
+GROUP BY ma_dich_vu
 ;
 
 
@@ -273,8 +335,10 @@ INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu
 
 
 USE furama;
-SELECT DISTINCT kh.ho_ten
-FROM khach_hang kh;
+SELECT DISTINCT
+    kh.ho_ten
+FROM
+    khach_hang kh;
 
 
 
@@ -283,14 +347,24 @@ FROM khach_hang kh;
 
 
 
-SELECT kh.ho_ten
-FROM khach_hang kh
+SELECT 
+    kh.ho_ten
+FROM
+    khach_hang kh
 GROUP BY ho_ten;
 
 -- cách 3:
 
 
-SELECT kh.ho_ten FROM khach_hang kh WHERE kh.ho_ten IN (SELECT DISTINCT kh.ho_ten FROM khach_hang kh);
+SELECT 
+    kh.ho_ten
+FROM
+    khach_hang kh
+WHERE
+    kh.ho_ten IN (SELECT DISTINCT
+            kh.ho_ten
+        FROM
+            khach_hang kh);
 
 
 
@@ -391,7 +465,6 @@ LIMIT 2;
 
 
 
-
 -- ---------------- task 14 ------------------
 
 
@@ -432,7 +505,7 @@ WHERE
         HAVING COUNT(hdct.ma_dich_vu_di_kem) = 1)
 GROUP BY hdct.ma_dich_vu_di_kem, hd.ma_hop_dong ;
 
-
+USE furama;
 
 -- ---------------- task 15 ------------------
 -- 15.	Hiển thi thông tin của tất cả nhân viên bao gồm
@@ -454,6 +527,7 @@ FROM
     trinh_do AS td ON nv.ma_trinh_do = td.ma_trinh_do
         INNER JOIN
     bo_phan AS bp ON nv.ma_bo_phan = bp.ma_bo_phan
+    WHERE year(hd.ngay_lam_hop_dong) BETWEEN 2020 AND 2021 
 GROUP BY hd.ma_nhan_vien
 HAVING COUNT(hd.ma_nhan_vien) <= 3;
  
