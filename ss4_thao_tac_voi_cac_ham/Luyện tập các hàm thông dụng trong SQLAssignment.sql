@@ -88,7 +88,7 @@ WHERE m.mark = (SELECT max(m.mark) FROM mark m )
 
 -- Hiển thị các thông tin sinh viên và điểm trung bình của mỗi sinh viên, xếp hạng theo thứ tự điểm giảm dần
 
-SELECT s.studentid, studentname, avg(mark)
+SELECT s.studentid, studentname, avg(mark) AS diem_trung_binh
 FROM student s
 INNER JOIN mark m 
 ON s.studentid = m.studentid
