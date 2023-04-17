@@ -187,11 +187,28 @@ INSERT INTO dich_vu VALUES
 
 
 -- ------------- task 2 --------------
-
---  SELECT *FROM nhan_vien WHERE ho_va_ten LIKE 'H%'OR ho_va_ten like 'T%' OR ho_va_ten LIKE 'K%' AND length(ho_va_ten) <=15;
---  
---  
+-- 2.	Hiển thị thông tin của tất cả nhân viên có trong hệ thống
+-- có tên bắt đầu là một trong các ký tự “H”, “T” hoặc “K” và có tối đa 15 kí tự.
+ 
+ 
+ 
+ 
+ SELECT *FROM nhan_vien WHERE ho_va_ten LIKE 'H%'OR ho_va_ten like 'T%' OR ho_va_ten LIKE 'K%' AND length(ho_va_ten) <=15;
+ 
 --  -- -------------- task 3 -------------
+-- 3.	Hiển thị thông tin của tất cả khách hàng có độ tuổi từ 18 đến 50 tuổi
+-- và có địa chỉ ở “Đà Nẵng” hoặc “Quảng Trị”.
+
+        
+select *
+from khach_hang
+WHERE (dia_chi like '%Đà Nẵng%' or dia_chi like '%Quảng Trị%')
+AND (
+round(datediff(curdate(),ngay_sinh) / 365) BETWEEN 18 AND 50
+)
+;
+
+
 --  SELECT 
 --     *
 -- FROM
@@ -200,8 +217,19 @@ INSERT INTO dich_vu VALUES
 --     ngay_sinh BETWEEN CAST('1973-01-01' AS DATE) AND CAST('2005-01-01' AS DATE)
 --         AND (dia_chi LIKE '%Đà Nẵng'
 --         OR dia_chi LIKE '%Quảng Trị');
---  
---   -- -------------- task 4 -------------
+
+SELECT 
+    *
+FROM
+    khach_hang
+WHERE
+    (dia_chi LIKE '%Đà Nẵng'
+        OR dia_chi LIKE '%Quảng Trị')
+        AND (ROUND(DATEDIFF(CURDATE(), ngay_sinh) / 365) BETWEEN 18 AND 50);
+       
+        
+        
+  -- -------------- task 4 -------------
 
   -- Đếm xem tương ứng với mỗi khách hàng đã từng đặt phòng bao nhiêu lần.
   -- Kết quả hiển thị được sắp xếp tăng dần theo số lần đặt phòng của khách hàng
@@ -209,13 +237,45 @@ INSERT INTO dich_vu VALUES
 
 USE furama;
 
+select kh.*, count(hd.ma_khach_hang)  
+from khach_hang AS kh
+inner join loai_khach AS lk ON kh.ma_loai_khach = lk.ma_loai_khach
+LEFT join hop_dong AS hd ON hd.ma_khach_hang = kh.ma_khach_hang
+WHERE lk.ten_loai_khach like 'Diamond'
+GROUP BY kh.ma_khach_hang;
+
+
+
+
+
+
+
+
+
+
+SELECT kh.ho_ten ,count(hd.ma_khach_hang) 
+FROM khach_hang AS kh
+LEFT JOIN hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
+INNER JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+WHERE lk.ten_loai_khach LIKE 'Diamond'
+GROUP BY kh.ma_khach_hang
+;
+
+
+
+
+
+
+
+
+
 SELECT 
-    kh.ho_ten, COUNT(*) AS so_lan_dat
+    kh.ho_ten, COUNT(hd.ma_khach_hang) AS so_lan_dat
 FROM
     khach_hang kh
         INNER JOIN
     loai_khach lk ON lk.ma_loai_khach = kh.ma_loai_khach
-        INNER JOIN
+        LEFT JOIN
     hop_dong hd ON kh.ma_khach_hang = hd.ma_khach_hang
 WHERE
     lk.ten_loai_khach LIKE 'Diamond'
@@ -367,19 +427,9 @@ FROM
 
 
 
-SELECT 
-    kh.ho_ten
-FROM
-    khach_hang kh
-WHERE
-    kh.ho_ten IN (SELECT DISTINCT
-            kh.ho_ten
-        FROM
-            khach_hang kh);
 
 
 
-  
   
   -- ---------------- task 9 ------------------
 -- Thực hiện thống kê doanh thu theo tháng,
@@ -549,17 +599,67 @@ HAVING COUNT(hd.ma_nhan_vien) <= 3;
 
 SET SQL_SAFE_UPDATES = 0;
 
-DELETE FROM nhan_vien
-WHERE ma_nhan_vien not IN (  SELECT 
-    nv.ma_nhan_vien
+DELETE FROM nhan_vien AS nv
+WHERE nv.ma_nhan_vien not IN (  SELECT 
+    hd.ma_nhan_vien
 FROM
     hop_dong AS hd
-        INNER JOIN
-    nhan_vien AS nv ON nv.ma_nhan_vien = hd.ma_nhan_vien
     WHERE year(hd.ngay_lam_hop_dong) BETWEEN 2019 AND 2021) ;
 
 
 
  -- ---------------- task 17 ------------------
-
+-- 17.	Cập nhật thông tin những khách hàng có
+-- ten_loai_khach từ Platinum lên Diamond,
+-- chỉ cập nhật những khách hàng đã từng đặt phòng với Tổng Tiền thanh toán trong năm 2021
+-- là lớn hơn 10.000.000 VNĐ.  IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),0) AS tong_tien
+ 
+ UPDATE khach_hang
+ SET ma_loai_khach = 1
+ WHERE ma_khach_hang IN (
+ SELECT 
+    kh.ma_khach_hang
+FROM
+    khach_hang AS kh
+        LEFT JOIN
+    hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
+        LEFT JOIN
+    dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
+        JOIN
+    loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+        LEFT JOIN
+    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+        LEFT JOIN
+    dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+    GROUP BY kh.ma_khach_hang
+    HAVING sum(IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),0)) > 10000000)
+ ;
+ 
+ 
+ 
+ 
+ 
+ SELECT * from khach_hang;
+SELECT 
+    hd.ma_khach_hang
+FROM
+    khach_hang AS kh
+        LEFT JOIN
+    hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
+        LEFT JOIN
+    dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
+        JOIN
+    loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+        LEFT JOIN
+    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+        LEFT JOIN
+    dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+    GROUP BY kh.ma_khach_hang
+    HAVING sum(IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),0)) > 10000000
+    ; 
+ 
+ 
+ 
+ 
+ 
  
