@@ -355,6 +355,17 @@ GROUP BY ho_ten;
 
 -- cách 3:
 
+SELECT 
+    kh.ho_ten
+FROM
+    khach_hang kh
+UNION
+SELECT 
+    kh.ho_ten
+FROM
+    khach_hang kh;
+
+
 
 SELECT 
     kh.ho_ten
