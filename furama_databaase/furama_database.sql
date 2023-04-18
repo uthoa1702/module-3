@@ -663,9 +663,62 @@ SET SQL_SAFE_UPDATES = 0;
 SELECT * from platinium_to_diamond;
 
 
+--  -- ---------------- task 18 ------------------
 
 -- Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
 
+SET FOREIGN_KEY_CHECKS = 0;
+  SET SQL_SAFE_UPDATES = 0;
+DELETE FROM khach_hang kh  WHERE kh.ma_khach_hang IN ( SELECT hd_ma_khach FROM
+(SELECT  hd.ma_khach_hang AS hd_ma_khach FROM hop_dong hd
+INNER JOIN khach_hang kh ON kh.ma_khach_hang = hd.ma_khach_hang
+ WHERE year(hd.ngay_lam_hop_dong)  < 2021 ) AS hd_ma_khach_hang )   ;
+   SET SQL_SAFE_UPDATES = 1;
+  SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+-- 19.	Cập nhật giá cho các dịch vụ đi kèm được sử dụng trên 10 lần trong năm 2020 lên gấp đôi.
+SET SQl_SAFE_UPDATES =0;
+UPDATE dich_vu_di_kem 
+SET 
+    gia = gia * 2
+WHERE
+    ma_dich_vu_di_kem IN (SELECT 
+            madvdk
+        FROM
+            (SELECT 
+                dvdk.ma_dich_vu_di_kem AS madvdk
+            FROM
+                hop_dong_chi_tiet hdct
+            INNER JOIN hop_dong hd ON hd.ma_hop_dong = hdct.ma_hop_dong
+            INNER JOIN dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+            WHERE
+                YEAR(hd.ngay_lam_hop_dong) = 2020
+            GROUP BY dvdk.ma_dich_vu_di_kem
+            HAVING SUM(hdct.so_luong) > 10) AS madvdka);
+-- 20.	Hiển thị thông tin của tất cả các nhân viên và khách hàng có trong hệ thống,
+--  thông tin hiển thị bao gồm id (ma_nhan_vien, ma_khach_hang), ho_ten, email, so_dien_thoai, ngay_sinh, dia_chi.
+
+
+SELECT 
+    ma_nhan_vien,
+    ho_ten,
+    email,
+    so_dien_thoai,
+    ngay_sinh,
+    dia_chi
+FROM
+    nhan_vien 
+UNION SELECT 
+    ma_khach_hang,
+    ho_ten,
+    email,
+    so_dien_thoai,
+    ngay_sinh,
+    dia_chi
+FROM
+    khach_hang
 
 
 
@@ -676,9 +729,3 @@ SELECT * from platinium_to_diamond;
 
 
 
-
-
-
-
-
- 
