@@ -301,7 +301,7 @@ SELECT
     dv.ten_dich_vu,
     hd.ngay_lam_hop_dong,
     hd.ngay_ket_thuc,
-    IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),
+    IFNULL((dv.chi_phi_thue + sum(IFNULL(hdct.so_luong * dvdk.gia, 0))),
             0) AS tong_tien
 FROM
     khach_hang AS kh
@@ -315,7 +315,8 @@ FROM
     hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
         LEFT JOIN
     dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
-ORDER BY tong_tien ASC;
+    GROUP BY kh.ma_khach_hang, hd.ma_hop_dong
+ORDER BY kh.ma_khach_hang ;
 
 
 
@@ -452,7 +453,13 @@ ORDER BY month(hd.ngay_lam_hop_dong);
 SELECT hd.ma_hop_dong, hd.ngay_lam_hop_dong, hd.ngay_ket_thuc, ifnull((hd.tien_dat_coc),0) AS tien_dat_coc,ifnull(sum(hdct.so_luong),0) AS so_luong_dich_vu_di_kem 
 FROM hop_dong AS hd
 LEFT JOIN hop_dong_chi_tiet AS hdct ON hd.ma_hop_dong = hdct.ma_hop_dong
-GROUP BY  hd.ma_hop_dong;
+GROUP BY  hd.ma_hop_dong
+;
+
+
+
+
+
 
 
 
@@ -614,52 +621,64 @@ FROM
 -- chỉ cập nhật những khách hàng đã từng đặt phòng với Tổng Tiền thanh toán trong năm 2021
 -- là lớn hơn 10.000.000 VNĐ.  IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),0) AS tong_tien
  
- UPDATE khach_hang
- SET ma_loai_khach = 1
- WHERE ma_khach_hang IN (
- SELECT 
-    kh.ma_khach_hang
-FROM
-    khach_hang AS kh
-        LEFT JOIN
-    hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
-        LEFT JOIN
-    dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
-        JOIN
-    loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
-        LEFT JOIN
-    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
-        LEFT JOIN
-    dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
-    GROUP BY kh.ma_khach_hang
-    HAVING sum(IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),0)) > 10000000)
+ 
+ 
+
+ 
+ CREATE view tong_tien_khach_hang AS 
+ SELECT kh.ma_khach_hang, kh.ho_ten, lk.ten_loai_khach, hd.ma_hop_dong, dv.ten_dich_vu, hd.ngay_lam_hop_dong, hd.ngay_ket_thuc,
+(ifnull(dv.chi_phi_thue + ifnull( (sum(hdct.so_luong * dvdk.gia)),0),0)) AS tong_tien
+from khach_hang AS kh
+INNER JOIN loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
+LEFT JOIN hop_dong AS hd ON hd.ma_khach_hang = kh.ma_khach_hang
+LEFT JOIN hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
+LEFT JOIN dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+LEFT JOIN dich_vu AS dv ON dv.ma_dich_vu = hd.ma_dich_vu
+GROUP BY kh.ma_khach_hang, hd.ma_hop_dong
+ORDER BY kh.ma_khach_hang, tong_tien DESC;
+ 
+ 
+ 
+ SELECT tong_tien, ma_khach_hang
+ from tong_tien_khach_hang
+ WHERE (tong_tien > 1000000) AND (year(ngay_lam_hop_dong) = 2021) AND (ten_loai_khach like 'Diamond' )
+ GROUP BY ma_khach_hang
  ;
  
  
  
  
  
- SELECT * from khach_hang;
-SELECT 
-    hd.ma_khach_hang
-FROM
-    khach_hang AS kh
-        LEFT JOIN
-    hop_dong AS hd ON kh.ma_khach_hang = hd.ma_khach_hang
-        LEFT JOIN
-    dich_vu AS dv ON hd.ma_dich_vu = dv.ma_dich_vu
-        JOIN
-    loai_khach AS lk ON lk.ma_loai_khach = kh.ma_loai_khach
-        LEFT JOIN
-    hop_dong_chi_tiet AS hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
-        LEFT JOIN
-    dich_vu_di_kem AS dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
-    GROUP BY kh.ma_khach_hang
-    HAVING sum(IFNULL((dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)),0)) > 10000000
-    ; 
+  create view platinium_to_diamond AS SELECT ma_khach_hang ,sum(tong_tien), ten_loai_khach, ngay_lam_hop_dong
+ FROM tong_tien_khach_hang
+ WHERE (year(ngay_lam_hop_dong) = 2021) AND ten_loai_khach like 'Platinium' And tong_tien > 1000000
+ GROUP BY ma_khach_hang,ma_hop_dong ;
+ 
+
+
+ 
+SET SQL_SAFE_UPDATES = 0;
  
  
- 
- 
- 
+SELECT * from platinium_to_diamond;
+
+
+
+-- Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
