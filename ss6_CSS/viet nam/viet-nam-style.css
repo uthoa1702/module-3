@@ -1,0 +1,23 @@
+p {
+    text-indent: 30px;
+    text-align: justify;
+    font-family: Arial;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+
+h1 {
+    line-height: 0.10;
+}
+
+#p2 {
+    font-size: 12px;
+    text-indent: 5px;
+    margin: 0;
+}
+hr{
+    margin: 0;
+}
