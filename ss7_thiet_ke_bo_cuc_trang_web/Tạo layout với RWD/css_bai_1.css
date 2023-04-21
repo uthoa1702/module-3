@@ -1,29 +1,73 @@
 .container{
     height: 595px;
-    background: blue;
+
+}
+.row .header{
+    position: fixed;
+
 }
 .header{
-    background: orange;
-    height: 50px;
+    background: black;
+    height: 60px;
+
+}
+.header #login{
+    margin: 0;
+    position: fixed;
+    right: 0;
+    font-size: 20px;
+    padding: 0;
+    height: 60px;
+    width: 60px;
+    background-color: rgba(0, 0, 0, 0.81);
+    color: white;
+
 }
 .footer{
-    background:darkblue;
-    height: 50px;
+    background: rgba(0, 0, 0, 0.66);
+    height: 100px;
+justify-content: center;
+    justify-items: center;
 }
 .left{
-    background: #0f6674;
-    padding-left: 50px;
+    background: wheat;
 }
 .right{
-    background: #0f6674;
+    background: white;
 }
 .center{
-    background: #7abaff;
+    background: white;
+}
+.menu{
+    background: white;
+}
+.content{
+    background: aliceblue;
 }
 *{
     margin: 0px;
     box-sizing: border-box;
 }
+#row-header{
+    /*margin-left: 10px;*/
+    display: flex;
+.
+}
+#footer-text {
+    color: white;
+
+}
+.row-header-icon{
+
+    margin: 20px;
+    font-size: 20px;
+}
+.ads {
+    height: 100px;
+    width: 200px;
+    margin: 10px;
+}
+
 
 .row{
     /*cho phép thẻ div (col) nổi lên trên*/
@@ -32,8 +76,10 @@
     flex-wrap: wrap;
 }
 ul{
+    padding: 0px;
     list-style: none;
 }
+
 
 /*màn hình điện thoai*/
 @media only screen and (max-width:740px ){
@@ -50,15 +96,8 @@ ul{
     .col-s-11 {width: 91.66667%;}
     .col-s-12 {width: 100%;}
     /*tăng kích thước font cho dễ đọc*/
-    li{
-        font-size: 30px;
-        text-align: center;
-        color: white;
-    }
-    p{
-        font-size: 35px;
-        color: darkblue;
-    }
+
+
     .title{
         font-size: 55px;
         color: white;
@@ -78,6 +117,7 @@ ul{
     .col-m-10 {width: 83.33333%;}
     .col-m-11 {width: 91.66667%;}
     .col-m-12 {width: 100%;}
+
 }
 /*Màn hình máy tính pc và tivi smart*/
 @media only screen and (min-width:1241px){
@@ -93,5 +133,24 @@ ul{
     .col-l-10 {width: 83.33333%;}
     .col-l-11 {width: 91.66667%;}
     .col-l-12 {width: 100%;}
+    li{
+        font-size: 30px;
+        text-align: center;
+        color: white;
+    }
+    h1 {
+        left: 0;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        font-family: "arial";
+        font-size: 50px;
+    }
+    p{
+        margin-top: 20px;
+
+        font-family: Arial;
+        text-align: justify;
+        font-size: 20px;
+    }
 }
 
