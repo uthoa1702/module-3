@@ -3,6 +3,10 @@ p {
     text-align: justify;
     font-family: Arial;
 }
+body{
+    margin-left: 400px;
+    margin-right: 400px;
+}
 
 a {
     color: blue;
