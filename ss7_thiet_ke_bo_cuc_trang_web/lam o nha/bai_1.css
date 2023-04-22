@@ -1,0 +1,131 @@
+.header {
+    background-color: black;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 9fr 1fr;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 2fr 8fr 2fr;
+    grid-auto-rows: minmax(400px, auto);
+}
+
+.container .menu {
+    background-color: whitesmoke;
+    text-align: center;
+    margin-left: 0;
+    padding: 0;
+}
+
+.container .content {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+
+}
+
+.footer {
+    background-color: black;
+    height: 50px;
+
+}
+
+.text1 {
+    background-color: white;
+    margin: 10px;
+}
+
+.text2 {
+    background-color: white;
+    margin: 10px;
+
+}
+.ad ul{
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+.ad ul li{
+    margin: 20px;
+    padding: 0;
+}
+button{
+    height: 70px;
+    width: 70px;
+}
+
+* {
+    margin: 0;
+}
+.row-header-icon{
+    list-style: none;
+    margin-right: 20px;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-top: 13px;
+    color: grey;
+
+}
+div #login p {
+    right: 0;
+    margin-top: 15px;
+    align-items: center;
+    color: grey;
+}
+
+#icon-header {
+    padding: 0;
+    display: flex;
+}
+#menu-link {
+    list-style: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+}
+h1{
+    color: black;
+}
+p{
+    text-align: justify;
+    margin-top: 10px;
+}
+@media (max-width: 900px) {
+    .container {
+        grid-template-columns: 3fr 8fr;
+    }
+    .ad{
+        width: 100%;
+        grid-column-start: 1;
+        grid-column-end: 3;
+
+    }
+    button{
+        width: 300px;
+        height: 200px;
+    }
+
+}
+@media (max-width: 400px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    .menu{
+        width: 100%;
+        grid-column-start: 1;
+        grid-column-end: 3;
+    }
+    .ad{
+        width: 100%;
+        grid-column-start: 1;
+        grid-column-end: 3;
+
+    }
+    button{
+        width: 200px;
+        height: 100px;
+    }
+
+}
+
