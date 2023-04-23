@@ -9,6 +9,9 @@
     display: grid;
     grid-template-columns: 1fr 9fr;
     grid-template-rows: 1fr;
+    position: sticky;
+    top: 0;
+    width: 100%;
 }
 
 .menu {
@@ -47,6 +50,9 @@
     margin-right: 5px;
     grid-template-rows: 1fr 1fr 1fr 1fr;
 
+}
+.container.side-bar .side-bar-video{
+    margin-bottom: 10px;
 }
 img{
     max-width: 370px;
