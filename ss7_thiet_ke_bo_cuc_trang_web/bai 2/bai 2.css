@@ -1,14 +1,35 @@
+.all{
+    margin: auto;
+    width: auto;
+    max-width: 1250px;
+}
 .header {
     background-color: rgba(128, 128, 128, 0.73);
     height: 50px;
     display: grid;
-    grid-template-columns: 9fr 1fr;
+    grid-template-columns: 1fr 9fr;
+    grid-template-rows: 1fr;
 }
 
 .menu {
     height: 25px;
     background-color: rgba(128, 128, 128, 0.73);
     margin-top: 5px;
+
+}
+
+.menu div ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+
+
+
+
+}
+.menu div ul li{
+    margin-right: 10px;
 }
 
 .container {
@@ -51,4 +72,5 @@
 
 * {
     margin: 0;
+
 }
