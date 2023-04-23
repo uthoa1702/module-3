@@ -37,7 +37,7 @@
     margin-bottom: 5px;
     display: grid;
     grid-template-columns: 3fr 7fr;
-    grid-auto-rows: minmax(400px, auto);
+    grid-auto-rows: minmax(600px, auto);
     background-color: white;
 }
 
@@ -45,12 +45,25 @@
     background-color: rgba(128, 128, 128, 0.73);
     display: grid;
     margin-right: 5px;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
 
+}
+img{
+    max-width: 370px;
+    width: auto;
 }
 
 .container .main-display {
     background-color: rgba(128, 128, 128, 0.73);
     display: grid;
+    grid-template-rows: 1fr 1fr;
+}
+.container .main-display div {
+    margin: 10px;
+}
+.container .main-display .brief p{
+    text-indent: 25px;
+    text-align: justify;
 }
 
 
@@ -72,5 +85,13 @@
 
 * {
     margin: 0;
+
+}
+a{
+    text-decoration: none;
+}
+a:hover {
+
+    color: red;
 
 }
