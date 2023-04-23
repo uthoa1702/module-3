@@ -45,7 +45,7 @@
 }
 
 .container .side-bar {
-    background-color: rgba(128, 128, 128, 0.73);
+    background-color: rgba(224, 222, 222, 0.73);
     display: grid;
     margin-right: 5px;
     grid-template-rows: 1fr 1fr 1fr 1fr;
@@ -60,7 +60,7 @@ img{
 }
 
 .container .main-display {
-    background-color: rgba(128, 128, 128, 0.73);
+    background-color: rgba(205, 205, 205, 0.73);
     display: grid;
     grid-template-rows: 1fr 1fr;
 }
