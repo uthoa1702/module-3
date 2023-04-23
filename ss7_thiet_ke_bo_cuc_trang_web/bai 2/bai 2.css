@@ -1,0 +1,54 @@
+.header {
+    background-color: rgba(128, 128, 128, 0.73);
+    height: 50px;
+    display: grid;
+    grid-template-columns: 9fr 1fr;
+}
+
+.menu {
+    height: 25px;
+    background-color: rgba(128, 128, 128, 0.73);
+    margin-top: 5px;
+}
+
+.container {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: grid;
+    grid-template-columns: 3fr 7fr;
+    grid-auto-rows: minmax(400px, auto);
+    background-color: white;
+}
+
+.container .side-bar {
+    background-color: rgba(128, 128, 128, 0.73);
+    display: grid;
+    margin-right: 5px;
+
+}
+
+.container .main-display {
+    background-color: rgba(128, 128, 128, 0.73);
+    display: grid;
+}
+
+
+.container .content {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+
+}
+
+.footer {
+    background-color: rgba(128, 128, 128, 0.73);
+    height: 50px;
+    color: white;
+    text-align: center;
+}
+.footer p{
+    padding: 15px;
+}
+
+* {
+    margin: 0;
+}
