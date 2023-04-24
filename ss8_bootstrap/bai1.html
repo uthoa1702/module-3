@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>bai 1</title>
+    <script src="bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="bootstrap-5.0.2-dist/css/bootstrap.css">
+    <style>
+   *{
+       padding: 5px;
+   }
+
+        .card {
+            width: 100%;
+            height: auto;
+        }
+   .responsive {
+       padding: 0 6px;
+       float: left;
+       width: 24.99999%;
+   }
+   @media only screen and (max-width: 700px){
+       .responsive {
+           width: 49.99999%;
+           margin: 6px 0;
+       }
+   }
+
+   @media only screen and (max-width: 500px){
+       .responsive {
+           width: 100%;
+       }
+   }
+    </style>
+</head>
+<body>
+
+<h2 >Responsive Image Gallery</h2>
+<h4>Resize the browser window to see the effect.</h4>
+
+<div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-12 ">
+        <div class="card">
+            <img src="img_fjords.jpg" class="card-img-top" alt="Trolltunga Norway">
+            <div class="card-body">
+                <p class="card-text">Add a description of the image here</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-3 col-md-6 col-sm-12 ">
+        <div class="card">
+            <img src="img_forest.jpg" class="card-img-top" alt="Forest">
+            <div class="card-body">
+                <p class="card-text">Add a description of the image here</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-3 col-md-6 col-sm-12 ">
+        <div class="card">
+            <img src="img_lights.jpg" class="card-img-top" alt="Northern Lights">
+            <div class="card-body">
+                <p class="card-text">Add a description of the image here</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-3 col-md-6 col-sm-12 ">
+        <div class="card">
+            <img src="img_mountains.jpg" class="card-img-top" alt="Mountains">
+            <div class="card-body">
+                <p class="card-text">Add a description of the image here</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="clearfix"></div>
+
+<div style="padding:6px;">
+    <p>This example use media queries to re-arrange the images on different screen sizes: for screens larger than 700px
+        wide, it will show four images side by side, for screens smaller than 700px, it will show two images side by
+        side. For screens smaller than 500px, the images will stack vertically (100%).</p>
+</div>
+
+</body>
+</html>
+
