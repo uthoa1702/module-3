@@ -11,13 +11,6 @@
     <title>Product Discount Calculator</title>
 </head>
 <body>
-<%
-      String des = request.getParameter("description");
-      float price = Float.parseFloat(request.getParameter("price"));
-      int discountPercent = Integer.parseInt(request.getParameter("discount"));
-      double discountAmount = price*discountPercent*0.01;
-      double discountPrice = price - discountAmount;
-%>
 
 <h1>Product Description: ${des}</h1>
 <h1>Product Price: ${price}</h1>
