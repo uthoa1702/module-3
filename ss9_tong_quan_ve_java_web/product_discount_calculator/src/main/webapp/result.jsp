@@ -11,7 +11,6 @@
     <title>Product Discount Calculator</title>
 </head>
 <body>
-
 <h1>Product Description: ${des}</h1>
 <h1>Product Price: ${price}</h1>
 <h1>Product Discount Percent: ${discountPercent}</h1>
