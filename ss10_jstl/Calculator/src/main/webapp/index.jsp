@@ -37,6 +37,7 @@
         </table>
     </fieldset>
     <h4> ${a} ${c} ${b} = ${result}</h4>
+    <h4>${exception}</h4>
 </form>
 
 </body>

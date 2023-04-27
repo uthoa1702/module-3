@@ -11,7 +11,12 @@ public class Calculate {
         return a*b;
     }
     public float division(float a, float b){
-        float c = a / b;
+        float c = 0;
+            try {
+                c = a / b;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         return c;
     }
 }
