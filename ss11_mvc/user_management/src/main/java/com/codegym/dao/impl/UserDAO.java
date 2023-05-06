@@ -3,11 +3,7 @@ package com.codegym.dao.impl;
 import com.codegym.dao.IUserDAO;
 import com.codegym.model.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class UserDAO implements IUserDAO {
@@ -19,8 +15,11 @@ public class UserDAO implements IUserDAO {
     private static final String SELECT_USER_BY_ID = "SELECT id,name,email,country FROM users WHERE id =?";
     private static final String SELECT_ALL_USERS = "SELECT * FROM users";
     private static final String DELETE_USERS_SQL = "DELETE FROM users WHERE id = ?;";
+    private static final String DELETE_BY_ID = "CALL delete_user(?);";
     private static final String UPDATE_USERS_SQL = "UPDATE users SET name = ?,email= ?, country =? WHERE id = ?;";
+    private static final String UPDATE_BY_ID = "CALL update_user(?,?,?,?);";
     private static final String FIND_BY_COUNTRY = "SELECT * FROM users WHERE country LIKE ?;";
+    private static final String DISPLAY_ALL = "CALL display_all();";
 
     public UserDAO() {
     }
@@ -42,14 +41,25 @@ public class UserDAO implements IUserDAO {
 
     public void insertUser(User user) throws SQLException {
         System.out.println(INSERT_USERS_SQL);
+        boolean check;
+        Connection connection = getConnection();
         // try-with-resource statement will auto close the connection.
-        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL)) {
+            connection.setAutoCommit(false);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getCountry());
             System.out.println(preparedStatement);
-            preparedStatement.executeUpdate();
+            check = preparedStatement.executeUpdate() > 0;
+            if (check){
+                connection.commit();
+            }
+            else {
+                connection.rollback();
+            }
         } catch (SQLException e) {
+            connection.rollback();
+
             printSQLException(e);
         }
     }
@@ -85,7 +95,7 @@ public class UserDAO implements IUserDAO {
         System.out.println(preparedStatement);
         preparedStatement.setString(1, "%" + country + "%");
         ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()){
+        while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String name = resultSet.getString("name");
             String email = resultSet.getString("email");
@@ -95,7 +105,8 @@ public class UserDAO implements IUserDAO {
         return userList;
 
     }
-    public List<User> sortByName(){
+
+    public List<User> sortByName() {
         List<User> users = new ArrayList<>();
         // Step 1: Establishing a Connection
         try (Connection connection = getConnection();
@@ -123,10 +134,11 @@ public class UserDAO implements IUserDAO {
                 return o1.getName().compareTo(o2.getName());
             }
         });
+
         return users;
     }
 
-    public List<User> selectAllUsers() {
+    public List<User> selectAllUsers() throws SQLException {
 
         // using try-with-resources to avoid closing resources (boilerplate code)
         List<User> users = new ArrayList<>();
@@ -134,10 +146,9 @@ public class UserDAO implements IUserDAO {
         try (Connection connection = getConnection();
 
              // Step 2:Create a statement using connection object
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);) {
-            System.out.println(preparedStatement);
+             CallableStatement callableStatement = connection.prepareCall(DISPLAY_ALL)) {
             // Step 3: Execute the query or update query
-            ResultSet rs = preparedStatement.executeQuery();
+            ResultSet rs = callableStatement.executeQuery();
 
             // Step 4: Process the ResultSet object.
             while (rs.next()) {
@@ -155,22 +166,24 @@ public class UserDAO implements IUserDAO {
 
     public boolean deleteUser(int id) throws SQLException {
         boolean rowDeleted;
-        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(DELETE_USERS_SQL);) {
-            statement.setInt(1, id);
-            rowDeleted = statement.executeUpdate() > 0;
+        try (Connection connection = getConnection();
+             CallableStatement callableStatement = connection.prepareCall(DELETE_BY_ID);) {
+            callableStatement.setInt(1, id);
+            rowDeleted = callableStatement.executeUpdate() > 0;
         }
         return rowDeleted;
     }
 
     public boolean updateUser(User user) throws SQLException {
         boolean rowUpdated;
-        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(UPDATE_USERS_SQL);) {
-            statement.setString(1, user.getName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getCountry());
-            statement.setInt(4, user.getId());
+        try (Connection connection = getConnection();
+             CallableStatement callableStatement = connection.prepareCall(UPDATE_BY_ID);) {
+            callableStatement.setString(2, user.getName());
+            callableStatement.setString(3, user.getEmail());
+            callableStatement.setString(4, user.getCountry());
+            callableStatement.setInt(1, user.getId());
 
-            rowUpdated = statement.executeUpdate() > 0;
+            rowUpdated = callableStatement.executeUpdate() > 0;
         }
         return rowUpdated;
     }
