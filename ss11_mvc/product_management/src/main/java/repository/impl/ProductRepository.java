@@ -45,6 +45,9 @@ public class ProductRepository implements IProductRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT);
 
             preparedStatement.setInt(1,product.getId());
+            preparedStatement.setString(1,product.getName());
+            preparedStatement.setInt(1,product.getId());
+            preparedStatement.setInt(1,product.getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
